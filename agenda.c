@@ -10,39 +10,54 @@ typedef struct inf{
 }pessoas;
 
 typedef struct auxiliar{
-    int n,cont;
+    int n,cont,escolha;
 }aux;
+
 
 void *pBuffer;
 pessoas *ptr;
+aux *help;
 
-void adiciona(pessoas *p) {
-    pBuffer = malloc (sizeof(pessoas));
+void adiciona(void *buf,pessoas *p,aux *h) {
+    pessoas *auxi;
 
-    printf("Diga o nome: ");
-    scanf("%s", pBuffer->nome);
+    if(h->cont == 1) {
+    ptr = (pessoas*) malloc ((h->cont)*(sizeof(pessoas)));
+    pBuffer = malloc (sizeof(aux) + ((h->cont)*(sizeof(pessoas))));
+
+    }
+
+    else {
+    ptr = realloc(ptr,(h->cont)*(sizeof(pessoas)));
+    pBuffer = malloc (sizeof(aux) + ((h->cont)*(sizeof(pessoas))));
+    }
+
+
 
 
 
 }
 
-aux *help;
-
-// Utilizar da struct de variaveis auxiliares para fazer as referencias.
-// So corno.
 
 
 int main() {
-    int n; // Temporário só para fazer a seleção de funções.
 
-    do{
+    help = (aux*) malloc (sizeof(aux));
+    help->cont = 0;
 
-      printf("1) Adicionar\n2) Apagar\n3) Buscar\n4) Listar\n\n");
-      scanf("%d", &n);
-    switch(n) {
+      do{
+
+      printf("1) Adicionar\n2) Apagar\n3) Buscar\n4) Listar\n\n5)Sair\n");
+      scanf("%d", &help->escolha);
+
+
+    switch(help->escolha) {
 
      case 1:
-            adicionar(ptr);
+
+            help->cont= help->cont + 1;
+            adicionar(pBuffer,ptr,help);
+
             break;
      case 2:
             printf("Apagar\n");
@@ -65,9 +80,8 @@ int main() {
 
    }
 
-   }while(n != 5);
+   }while(help->escolha != 5);
 
 
-    return 0;
-
+   return 0;
 }
