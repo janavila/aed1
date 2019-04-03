@@ -15,27 +15,23 @@ pessoas *ptr,*ptr_aux;
 
 void adicionar(pessoas* p,pessoas *ptr_aux, int* c,int *lacos){
 
-    if((*c) == 1) ptr_aux = (pessoas*) malloc (sizeof(pessoas));
-    else ptr_aux = (pessoas*) realloc (ptr_aux,(*c)*sizeof(pessoas));
-
-	printf("Diga o seu nome: ");
-	scanf(" %s", ptr_aux->nome);
-    printf("Diga seu CPF: ");
-    scanf("%d", &ptr_aux->cpf);
-    printf("Diga o seu Telefone: ");
-    scanf("%d", &ptr_aux->telefone);
-
-
     pBuffer = realloc(pBuffer,(3*sizeof(int)) + ((*c)*sizeof(pessoas)));
 
     if((*c) == 1) {
-    ptr_aux = (pessoas*)(lacos + 1);
-    ptr = ptr_aux;
+        ptr = (pessoas*) (lacos + 1);
+        ptr_aux = (pessoas*) (lacos + 1);
     }
     else {
-    ptr_aux = (pessoas*) ptr + 1;
+        ptr = ptr + 1;
+        ptr_aux = (pessoas*) (lacos + 1);
     }
 
+	printf("Diga o seu nome: ");
+	scanf(" %s", ptr->nome);
+    printf("Diga seu CPF: ");
+    scanf("%d", &ptr->cpf);
+    printf("Diga o seu Telefone: ");
+    scanf("%d", &ptr->telefone);
 
     printf("memoria ptr: %d\n", ptr);
     printf("memoria ptr_aux: %d\n", ptr_aux);
@@ -44,23 +40,35 @@ void adicionar(pessoas* p,pessoas *ptr_aux, int* c,int *lacos){
 
 void listar(pessoas *p,pessoas *p_aux,int *lacos, int* c) {
 
-    for(*lacos = 0; *lacos <= *c; ++(*lacos)){
+    for(*lacos = 0; *lacos < *c; ++(*lacos)){
 	printf("Nome: %s\n", p->nome);
 	printf("CPF: %d\n", p->cpf);
 	printf("Telefone: %d\n", p->telefone);
-	p = p + sizeof(pessoas);
+    (pessoas*) p--;
     }
 
     }
 
+void buscar(pessoas* p,int* n,int* lacos,int* c) {
+    printf("Entrou\n");
 
+   for(*lacos = 0; *lacos<*c; *lacos++){
 
+   if(*lacos = *n) {
+   printf("Nome: %s\n", p->nome);
+   printf("CPF: %d\n", p->cpf);
+   printf("Telefone: %d\n", p->telefone);
+   }
+   (pessoas*) p--;
+}
+
+}
 
 
 int main() {
 
 	int *n,*cont,*lacos;
-
+    int *indice; // Temporária só pra procurar com o indice.
     pBuffer = malloc (3*sizeof(int));
 
     n = pBuffer;
@@ -86,10 +94,6 @@ int main() {
 			*cont = *cont +1;
             adicionar(ptr,ptr_aux,cont,lacos);
 
-
-
-
-
             break;
      case 2:
             printf("Apagar\n");
@@ -98,8 +102,11 @@ int main() {
 
      case 3:
             printf("Buscar\n");
-            //buscar()
+            printf("Diga o indice que voce deseja procurar: ");
+            scanf("%d", indice);
+            buscar(ptr,indice,lacos,cont);
             break;
+     // O problema aqui ta que ele perde a referencia se eu uso a funcao de listar.
      case 4:
             printf("Listar\n");
             listar(ptr,ptr_aux,&lacos,cont);
