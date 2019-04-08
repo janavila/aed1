@@ -1,29 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+
+// Tem um bug na hora de selecionar a 5 posição na primeira vez, ele sai do programa :(.
 
 typedef struct inf{
-    int nome[40];
-    //int data,mes,ano;
+    char nome[40];
     int cpf,telefone;
 
 }pessoas;
 
 void *pBuffer;
 pessoas *ptr,*ptr_aux;
+int *n,*cont,*lacos;
 
 
-void adicionar(pessoas* p,pessoas *ptr_aux, int* c,int *lacos){
+void adicionar(){
 
-    pBuffer = realloc(pBuffer,(3*sizeof(int)) + ((*c)*sizeof(pessoas)));
+    pBuffer = realloc(pBuffer,(3*sizeof(int)) + ((*cont)*sizeof(pessoas)));
 
-    if((*c) == 1) {
-        ptr = (pessoas*) (lacos + 1);
-        ptr_aux = (pessoas*) (lacos + 1);
+	n = (int*) pBuffer;
+    cont = (int*) n + 1;
+    lacos = (int*) cont + 1;
+
+    if((*cont) == 1) {
+    	ptr = (pessoas*) (lacos + 1);
     }
-    else {
-        ptr = ptr + 1;
-        ptr_aux = (pessoas*) (lacos + 1);
+    else{
+    	ptr = (int*)lacos + 1;
+    for(*lacos = 1; *lacos < *cont; ++(*lacos)) {
+
+	ptr = (pessoas*) ptr + 1;
+
+    }
+
     }
 
 	printf("Diga o seu nome: ");
@@ -33,51 +44,78 @@ void adicionar(pessoas* p,pessoas *ptr_aux, int* c,int *lacos){
     printf("Diga o seu Telefone: ");
     scanf("%d", &ptr->telefone);
 
-    printf("memoria ptr: %d\n", ptr);
-    printf("memoria ptr_aux: %d\n", ptr_aux);
     }
 
 
-void listar(pessoas *p,pessoas *p_aux,int *lacos, int* c) {
+void listar() {
+	ptr = (int*) lacos + 1;
+    for(*lacos = 0; *lacos < *cont; ++(*lacos)){
+	printf("Nome: %s\n", ptr->nome);
+	printf("CPF: %d\n", ptr->cpf);
+	printf("Telefone: %d\n", ptr->telefone);
 
-    for(*lacos = 0; *lacos < *c; ++(*lacos)){
-	printf("Nome: %s\n", p->nome);
-	printf("CPF: %d\n", p->cpf);
-	printf("Telefone: %d\n", p->telefone);
-    (pessoas*) p--;
+	ptr = (pessoas*) ptr + 1;
     }
 
     }
 
-void buscar(pessoas* p,int* n,int* lacos,int* c) {
-    printf("Entrou\n");
+void buscar() {
 
-   for(*lacos = 0; *lacos<*c; *lacos++){
 
-   if(*lacos = *n) {
-   printf("Nome: %s\n", p->nome);
-   printf("CPF: %d\n", p->cpf);
-   printf("Telefone: %d\n", p->telefone);
+   ptr = lacos + 1;
+
+   for(*lacos = 1; *lacos<=*cont; *lacos = *lacos +1){
+
+   if(*lacos == *n) {
+   printf("Nome: %s\n", ptr->nome);
+   printf("CPF: %d\n", ptr->cpf);
+   printf("Telefone: %d\n", ptr->telefone);
    }
-   (pessoas*) p--;
+   ptr = (pessoas*) ptr + 1;
 }
 
 }
+
+void apagar() {
+
+	n = (int*) pBuffer;
+    cont = (int*) n + 1;
+    lacos = (int*) cont + 1;
+
+	ptr = lacos + 1;
+	ptr_aux = ptr + 1;
+
+	for(*lacos = 1; *lacos <= *cont; *lacos = *lacos + 1) {
+
+    if(*lacos >= *n) {
+    strcpy(ptr->nome,ptr_aux ->nome);
+    ptr->telefone = ptr_aux->telefone;
+    ptr->cpf = ptr_aux->cpf;
+
+    }
+
+    ptr = ptr + 1;
+    ptr_aux = ptr_aux + 1;
+
+	}
+
+    *cont = *cont - 1;
+
+    pBuffer = realloc(pBuffer,(3*sizeof(int)) + (*cont*sizeof(pessoas)));
+
+	}
+
+
+
 
 
 int main() {
 
-	int *n,*cont,*lacos;
-    int *indice; // Temporária só pra procurar com o indice.
     pBuffer = malloc (3*sizeof(int));
 
     n = pBuffer;
     cont = n + 1;
     lacos = cont + 1;
-
-    printf("n = %d\n",n);
-    printf("cont = %d\n",cont);
-    printf("lacos = %d\n", lacos);
 
     *cont = 0;
 
@@ -85,31 +123,30 @@ int main() {
       do{
 
       printf("1) Adicionar\n2) Apagar\n3) Buscar\n4) Listar\n5) Sair\n");
-      scanf("%d", &(*n));
+      scanf("%d", n);
 
     switch(*n) {
 
-     case 1:
+    case 1:
 
 			*cont = *cont +1;
-            adicionar(ptr,ptr_aux,cont,lacos);
+            adicionar();
 
             break;
-     case 2:
+    case 2:
             printf("Apagar\n");
-            //apagar()
+            printf("Diga o indice que voce deseja apagar: ");
+            scanf("%d", n);
+            apagar();
             break;
 
-     case 3:
-            printf("Buscar\n");
+    case 3:
             printf("Diga o indice que voce deseja procurar: ");
-            scanf("%d", indice);
-            buscar(ptr,indice,lacos,cont);
+            scanf("%d", n);
+            buscar();
             break;
-     // O problema aqui ta que ele perde a referencia se eu uso a funcao de listar.
-     case 4:
-            printf("Listar\n");
-            listar(ptr,ptr_aux,&lacos,cont);
+    case 4:
+            listar();
             break;
 
      case 5: break;
@@ -121,6 +158,8 @@ int main() {
 
    }while(*n != 5);
 
+
+    free(pBuffer);
 
    return 0;
 }
