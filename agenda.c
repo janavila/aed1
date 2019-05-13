@@ -3,10 +3,8 @@
 #include <math.h>
 #include <string.h>
 
-// Tem um bug na hora de selecionar a 5 posiÁ„o na primeira vez, ele sai do programa :(.
-
 typedef struct inf{
-    char nome[40];
+    char nome[20];
     int idade,telefone;
 
 }pessoas;
@@ -14,7 +12,6 @@ typedef struct inf{
 void *pBuffer;
 pessoas *ptr,*ptr_aux,*ptr_aux3;
 int *n,*cont,*lacos,*escolha;
-int teste; // vari·vel tempor·ria para tentar o algoritmo de inserÁ„o.
 
 
 void adicionar(){
@@ -62,36 +59,99 @@ void listar() {
 
     }
 
-void ordena(){
+void insertionsort(){
 
+    pBuffer = realloc(pBuffer,(4*sizeof(int)) + ((*cont+1)*sizeof(pessoas))); // Adiciona o auxiliar tempor√°rio.
+	n = (int*) pBuffer;
+    cont = (int*) n + 1;
+    lacos = (int*) cont + 1;
+    escolha = (int*) lacos + 1;
+    ptr = (int*) (escolha + 1);
+    for(*lacos = 1; *lacos < *cont; ++(*lacos)) {
+	ptr = (pessoas*) ptr + 1;
+    }
+
+    ptr_aux3 = ptr + 1;
     ptr = escolha + 1;
-    ptr_aux3 = escolha + 1;
+
 
     for(*lacos = 1; *lacos<*cont; *lacos = *lacos + 1){
-        teste = *lacos - 1; // i = j - 1;
-        ptr_aux = ptr + 1; // tmp = data[j];
+        *escolha = *lacos - 1; // i = j - 1;
+        *(ptr_aux3) = *(ptr+(*lacos)); // tmp = data[j];
 
-        while( (teste>=0) && (ptr_aux->idade < ptr->idade)) {
-
-            strcpy(ptr->nome,ptr_aux->nome); // passa o nome do prÛximo para o anterior.
-            ptr->idade = ptr_aux->idade; // passa a idade do prÛximo para o anterior.
-            ptr->telefone = ptr_aux->telefone; // passa o telefone do prÛximo para o anterior.
-
-            strcpy(ptr_aux3->nome,ptr->nome); // passa o nome do anterior para o prÛximo.
-            ptr_aux3->idade = ptr->idade; // passa a idade do anterior para o prÛximo.
-            ptr_aux3->telefone = ptr->telefone; // passa o telefone do anterior para o prÛximo.
-            teste--;
+        while( (*escolha>=0) && (ptr_aux3->idade < (ptr+(*escolha))->idade)) {
+            *(ptr+(*escolha)+1) = *(ptr+(*escolha));
+            *escolha = *escolha - 1;
         }
-        ptr = ptr + 1;
-        ptr_aux3 = ptr_aux3 + 1;
-    }
 
-
+        *(ptr+(*escolha)+1) = *(ptr_aux3);
 
     }
 
+    pBuffer = realloc(pBuffer,(4*sizeof(int)) + ((*cont)*sizeof(pessoas)));
+
+    }
 
 
+// Arrumar essa fun√ß√£o...
+
+void selectionsort() {
+
+    pBuffer = realloc(pBuffer,(4*sizeof(int)) + ((*cont+1)*sizeof(pessoas))); // Adiciona o auxiliar tempor√°rio.
+	n = (int*) pBuffer;
+    cont = (int*) n + 1;
+    lacos = (int*) cont + 1;
+    escolha = (int*) lacos + 1;
+    ptr = (int*) (escolha + 1);
+    for(*lacos = 1; *lacos < *cont; ++(*lacos)) {
+	ptr = (pessoas*) ptr + 1;
+    }
+
+    ptr_aux3 = ptr + 1;
+    ptr = escolha + 1;
+
+   for (*lacos=0; *lacos<*cont-1; *lacos = *lacos + 1) {
+     *(ptr_aux3) = *(ptr+(*lacos));
+     for(*escolha=*lacos+1; *escolha<*cont; *escolha = *escolha + 1)
+        if((ptr+(*escolha))->idade < ptr_aux3->idade){
+
+
+
+     	 }
+     }
+
+}
+
+void bubblesort() {
+
+    pBuffer = realloc(pBuffer,(4*sizeof(int)) + ((*cont+1)*sizeof(pessoas)));
+	n = (int*) pBuffer;
+    cont = (int*) n + 1;
+    lacos = (int*) cont + 1;
+    escolha = (int*) lacos + 1;
+    ptr = (int*) (escolha + 1);
+    for(*lacos = 1; *lacos < *cont; ++(*lacos)) {
+	ptr = (pessoas*) ptr + 1;
+    }
+
+    ptr_aux3 = ptr + 1;
+    ptr = escolha + 1;
+
+    for(*lacos = 0; *lacos<*cont-1; (*lacos)++){
+
+        for(*escolha = 0; *escolha<(*cont)-1; (*escolha)++){
+
+            if((ptr+(*escolha))->idade > (ptr+(*escolha)+1)->idade){
+
+            *(ptr_aux3) = *(ptr+(*escolha)); // temp
+            *(ptr+(*escolha)) = *(ptr+(*escolha)+1); //
+            *(ptr+(*escolha)+1) = *(ptr_aux3);
+
+            }
+        }
+    }
+    pBuffer = realloc(pBuffer,(4*sizeof(int)) + ((*cont)*sizeof(pessoas)));
+}
 
 void buscar() {
 
@@ -140,10 +200,6 @@ void apagar() {
 
 	}
 
-
-
-
-
 int main() {
 
     pBuffer = malloc (4*sizeof(int));
@@ -158,7 +214,7 @@ int main() {
 
       do{
 
-      printf("1) Adicionar\n2) Apagar\n3) Buscar\n4) Listar\n5) Sair\n");
+      printf("1) Adicionar\n2) Apagar\n3) Buscar\n4) Listar\n5) Insertion Sort\n6) Selection Sort\n7) BubbleSort\n8) Sair\n");
       scanf("%d", n);
 
     switch(*n) {
@@ -169,6 +225,7 @@ int main() {
             adicionar();
 
             break;
+
     case 2:
             printf("Apagar\n");
             printf("Diga o indice que voce deseja apagar: ");
@@ -181,19 +238,34 @@ int main() {
             scanf("%d", escolha);
             buscar();
             break;
+
     case 4:
-            ordena();
             listar();
             break;
 
-     case 5: break;
+    case 5:
+            insertionsort();
+            listar();
+            break;
 
-     default: printf("Esta opcao nao existe\n");
-              break;
+    case 6:
+            selectionsort();
+            listar();
+            break;
+
+    case 7:
+            bubblesort();
+            listar();
+            break;
+
+    case 8: break;
+
+    default: printf("Esta opcao nao existe\n");
+            break;
 
    }
 
-   }while(*n != 5);
+   }while(*n != 8);
 
 
     free(pBuffer);
